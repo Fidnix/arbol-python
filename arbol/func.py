@@ -48,3 +48,18 @@ def particion_lineal(elem: int = None, elems: list = []) -> tuple:
             return ( elems[:pos], elems[pos:] )
         pos += 1
     return ( elems, [] )
+
+if __name__ == "__main__":
+    # Pruebas de particion lineal
+    print('Igual')
+    print(pl(7, [1,6,7]))
+    print(pl(7, [6,7,8,9]))
+    print(pl(7, [1,2,3,4,7,8,9]))
+    print(pl(7, [1,7,8]))
+    print('Diferente')
+    print(pl(7, [1,6]))
+    print(pl(7, [6,8,9]))
+    print(pl(7, [1,2,3,4,8,9]))
+    print(pl(7, [1,2,3,4,5,6,8,9]))
+    print(pl(7, [1,8]))
+    print(pl(7, [8,9,10,11]))
