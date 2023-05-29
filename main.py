@@ -1,0 +1,26 @@
+from arbol import *
+
+if __name__ == '__main__':
+    xd = Arbol()
+    xd.insertar(2,3,4,7)
+    print(xd)
+    xd.insertar(8, 9, 10)
+    print(xd)
+    xd.insertar(5)
+    print(xd)
+    xd.insertar(1,6)
+    print(xd)
+    print(xd.obtener_nivel())
+
+    # print('Igual')
+    # print(pl(7, [1,6,7]))
+    # print(pl(7, [6,7,8,9]))
+    # print(pl(7, [1,2,3,4,7,8,9]))
+    # print(pl(7, [1,7,8]))
+    # print('Diferente')
+    # print(pl(7, [1,6]))
+    # print(pl(7, [6,8,9]))
+    # print(pl(7, [1,2,3,4,8,9]))
+    # print(pl(7, [1,2,3,4,5,6,8,9]))
+    # print(pl(7, [1,8]))
+    # print(pl(7, [8,9,10,11]))
