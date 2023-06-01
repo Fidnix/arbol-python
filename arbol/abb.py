@@ -1,5 +1,6 @@
 from arbol.nodo import Nodo
-from arbol.func import particion_lineal as pl
+from arbol.func import particion_lineal as pl, num_digitos
+from arbol.colas import *
 
 class Arbol:
     _raiz: Nodo
@@ -8,7 +9,7 @@ class Arbol:
         self._raiz = None
         if(len(elems) == 0):
             return
-        self.insertar(elems)
+        self.insertar(*elems)
     def es_arbol_vacio(self) -> bool:
         return self._raiz == None
     
@@ -23,43 +24,51 @@ class Arbol:
                 p._ant = Nodo(None, elems.pop(), None)
                 p = p._ant
             return
-        
-        self._raiz = self.insertar_recursivamente(self._raiz, elems)
-    def insertar_recursivamente(self, N: Nodo = None, elems: list = []) -> Nodo:
+        # print(self._raiz._elem)
+        self.insertar_recursivamente(self._raiz, elems)
+    def insertar_recursivamente(self, N: Nodo = None, elems: list = []) -> None:
         if(len(elems) ==0):
-            return N
+            return
         
         if(len(elems) == 1):
-            return self.insertar_uno(N, elems[0])
+            self.insertar_uno(N, elems[0])
+            return
         
+        # print(N._elem)
+        # print(elems)
         l1, l2 = pl(N._elem, elems)
+        # print(f'{l1=}, {l2=}')
 
         # print(f'{N.__str__(N)=}')
         # print(f'({l1=}, {l2=})')
 
+        void_ant: bool = False
         if(N._ant == None):
             p = N
             while(len(l1)!=0):
                 p._ant = Nodo(None, l1.pop(), None)
                 p = p._ant
-            return N
+            void_ant = True
+
         if(N._sig == None):
             p = N
             l2 = l2[::-1]
             while(len(l2)!=0):
                 p._sig = Nodo(None, l2.pop(), None)
                 p = p._sig
-            return N
+            return
 
+        if(void_ant):
+            return
 
-        N._ant = self.insertar_recursivamente(N._ant, l1)
-        N._sig = self.insertar_recursivamente(N._sig, l2)
+        self.insertar_recursivamente(N._ant, l1)
+        self.insertar_recursivamente(N._sig, l2)
         
-        return Nodo(N._ant, N._elem, N._sig)
+        # return Nodo(N._ant, N._elem, N._sig)
     
-    def insertar_uno(self, N: Nodo, elem: int) -> Nodo:
+    def insertar_uno(self, N: Nodo, elem: int) -> None:
         if(N == None):
-            return Nodo(None, elem, None)
+            return
         aux = None
         p = N
         while(p !=None):
@@ -69,23 +78,23 @@ class Arbol:
             elif (p._elem > elem):
                 p = p._ant
             else:
-                return N
+                return
         if(aux._elem < elem):
             aux._sig = Nodo(None, elem, None)
         else:
             aux._ant = Nodo(None, elem, None)
-        return N
+        return
 
     def __str__(self, recorrido: str = 'en') -> str:
         if(self._raiz == None):
             return 'Arbol Vacio'
 
         if(recorrido == 'en'):
-            return self.en_orden(self._raiz)
+            return self.en_orden(self._raiz)[1:-1]
         elif(recorrido == 'post'):
-            return self.post_orden(self._raiz)
+            return self.post_orden(self._raiz)[1:-1]
         elif(recorrido == 'pre'):
-            return self.pre_orden(self._raiz)
+            return self.pre_orden(self._raiz)[1:-1]
         else:
             raise ValueError(f'No es valido el tipo de recorrido: {recorrido}. Solo puede usar: "pre", "post" o "en"')
 
@@ -171,9 +180,85 @@ class Arbol:
 
         return N._elem + val_ant + val_sig
 
-    def grafica(self) -> str:
+    # , N: Nodo = None, max_n: int = None, current_n: int = None
+    def obtener_nodos_ordenados(self) -> Cola:
+        # if(max_n == None or current_n == None):
+        #     raise ValueError('El nivel del arbol y el nivel del subarbol no pueden ser Nulos para la funcion self.obtener_nodos_ordenados')
+        if(self._raiz == None):
+            return
+        cola_final: Cola = Cola()
+        N: NodoC = None
+
+        max_n: int = self.obtener_nivel()
+        arr_nodos: list = []
+        
+        for i in range(max_n):
+            for _ in range(2**i):
+                arr_nodos.append(None)
+
+        arr_aux: list = [self._raiz]
+        for i in range(len(arr_nodos)):
+            N = arr_aux[0]
+            arr_aux = arr_aux[1:]
+            arr_nodos[i] = N
+
+            if( N == None):
+                arr_aux.append(None)
+                arr_aux.append(None)
+                continue
+            if(N._ant != None):
+                arr_aux.append(N._ant)
+            else:
+                arr_aux.append(None)
+            if(N._sig != None):
+                arr_aux.append(N._sig)
+            else:
+                arr_aux.append(None)
+
+        for i in range(len(arr_nodos)):
+            if(arr_nodos[i] != None):
+                cola_final.encolar(arr_nodos[i]._elem)
+            else:
+                cola_final.encolar('None')
+        return cola_final
+    
+    def grafica(self, C: Cola = None, mayor_elem: int = None) -> str:
+        # Restriccion por arbol vacio
         if(self._raiz == None):
             return ''
-        return self.grafica_recursiva(self._raiz, 1)
-    def grafica_recursiva(self, N: Nodo = None, nivel: int = 0) -> str:
-        pass
+        
+        if(C == None):
+            C = self.obtener_nodos_ordenados()
+
+        if(mayor_elem == None):
+            mayor_elem = self.mayor()
+        
+        out: str = '' # Salida principal
+
+        # Datos de nivel
+        max_n = self.obtener_nivel()
+        current_n: int = 0
+        potencia: int = 1
+
+        # Datos de formato
+        tam_lado: int = 3
+        tam_nodo: int = max(4, num_digitos(mayor_elem)) + 2
+
+        # Funciones de formato
+        margen: callable = lambda n: (int(2**(max_n - n)) - 1)*(tam_nodo + tam_lado)
+        espacio_entre_nodos: callable = lambda n: int((2**(max_n - n+1))*(tam_lado + tam_nodo) - tam_nodo)
+        dibujo_nodo: callable = lambda nodo: f'({nodo:>{tam_nodo-2}})' if nodo != 'None' else f'({" ":>{tam_nodo-2}})'
+
+        long: int = C._size
+        elem: int = None
+        for i in range(1,long+1):
+            elem = C.desencolar()
+            if(i == potencia):
+                current_n += 1
+                out += f'\n\n\n\n{" "*margen(current_n)}{dibujo_nodo(elem)}'
+                # print(f'margen: {current_n}, {margen(current_n)}')
+                potencia *= 2
+            else:
+                # print(f'margen: {current_n}, {espacio_entre_nodos(current_n)}')
+                out += f'{" "*(espacio_entre_nodos(current_n))}{dibujo_nodo(elem)}'
+        return out
