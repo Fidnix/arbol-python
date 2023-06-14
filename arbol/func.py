@@ -1,3 +1,4 @@
+# No funciono, se supone que debia dividir listas mediante el enfoque: divide and conquer
 def particion_binaria(elem: int = None, elems: list = []) -> tuple:
         if(elem==None or len(elems) == 0):
             return ()
@@ -52,5 +53,4 @@ def particion_lineal(elem: int = None, elems: list = []) -> tuple:
 def num_digitos(num: int = 9):
     if(num < 10):
         return 1
-    
     return 1 + num_digitos(num/10)

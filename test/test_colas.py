@@ -19,28 +19,19 @@ def test():
     assert C.__str__(sep = ' ') == '5', f'No coinciden las salidas:\nSalida esperada: "5"\nSalida generada: {C.__str__(sep = " ")}'
     
     C.encolar()
-    # assert C._frente._elem == None, 'Se esperaba que el elemento agregado fuera None' 
+
     assert C.__str__(sep = ' ') == '5', f'No coinciden las salidas:\nSalida esperada: "5"\nSalida generada: {C.__str__(sep = " ")}'
-    # print(C)
+
     C.desencolar()
     C.desencolar()
     C.desencolar()
     assert C._frente == None, 'El frente debe ser None al eliminar todos los elementos' 
     x = C.desencolar()
     assert x == None, 'Si se trata de eliminar un elemento de una cola vacia, la salida debe ser None'
-    # print(C)
 
     C.encolar(1)
     C.encolar(2)
     C.encolar(3)
-
-    # P2: Cola = Cola(4)
-    # P2.encolar(5)
-    # P2.encolar(6)
-    # P2.encolar(7)
-    # P2.encolar(8)
-
-    # C.fusionar(P2)
 
     long: int = C._size
     arr = [C.desencolar() for _ in range(long) ]

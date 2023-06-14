@@ -13,7 +13,15 @@ class Arbol:
     def es_arbol_vacio(self) -> bool:
         return self._raiz == None
     
-    def insertar(self, *elems: int) -> None:
+    def insertar(self, *elems: int)-> None:
+        if(self._raiz == None):
+            self._raiz = Nodo(None, elems[0])
+            elem = elems[1:]
+        if(len(elems)==0):
+            return
+        for elem in elems:
+            self.insertar_uno(self._raiz, elem)
+    def insertar_ordenados(self, *elems: int) -> None:
         if(len(elems) == 0):
             return
         elems = sorted(elems)
@@ -33,14 +41,7 @@ class Arbol:
         if(len(elems) == 1):
             self.insertar_uno(N, elems[0])
             return
-        
-        # print(N._elem)
-        # print(elems)
         l1, l2 = pl(N._elem, elems)
-        # print(f'{l1=}, {l2=}')
-
-        # print(f'{N.__str__(N)=}')
-        # print(f'({l1=}, {l2=})')
 
         void_ant: bool = False
         if(N._ant == None):
@@ -179,11 +180,7 @@ class Arbol:
         val_sig = self.sumar_recursivo(N._sig)
 
         return N._elem + val_ant + val_sig
-
-    # , N: Nodo = None, max_n: int = None, current_n: int = None
     def obtener_nodos_ordenados(self) -> Cola:
-        # if(max_n == None or current_n == None):
-        #     raise ValueError('El nivel del arbol y el nivel del subarbol no pueden ser Nulos para la funcion self.obtener_nodos_ordenados')
         if(self._raiz == None):
             return
         cola_final: Cola = Cola()

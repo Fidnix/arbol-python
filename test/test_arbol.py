@@ -32,8 +32,5 @@ def test2():
 
     cola_nodos: Cola = arb.obtener_nodos_ordenados()
     print(f'Cola de nodos obtenida para la grafica: {cola_nodos}')
-    # print(cola_nodos._size)
-    # print(f'{arb._raiz._ant._elem} - {arb._raiz._sig._elem}')
     print('Grafica del arbol:')
     print(arb.grafica(C=cola_nodos))
-    # print(arb.obtener_nodos_ordenados(arb._raiz, arb.obtener_nivel() , 1))
